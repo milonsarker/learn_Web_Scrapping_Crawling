@@ -12,6 +12,11 @@ class QuotesSpider(scrapy.Spider):
 			text = qt.xpath('.//*[@class = "text"]/text()').extract_first()
 			author = qt.xpath('.//*[@class = "author"]/text()').extract_first()
 			tags = qt.xpath('.//*[@itemprop = "keywords"]/@content').extract_first()
-			print("----------------------------------------------------------------------------")
-			print(text + "\n" + author + "\n" + str(tags))
-			print("----------------------------------------------------------------------------")
+			yield {
+					"text" : text, 
+					"author": author,
+					"tags" : tags
+				}
+		next_page_url = response.xpath('//*[@class="next"]/a/@href').extract_first()
+		abs_next_page_url = response.urljoin(next_page_url)
+		yield scrapy.Request(abs_next_page_url)
